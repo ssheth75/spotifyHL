@@ -139,43 +139,50 @@ function Stats() {
   }
 
   return (
-    <div className="h-screen bg-customBlack font-custom flex">
+    // you  removed flex here
+    <div className="h-screen bg-customBlack font-custom">
       <div>
         <div
-          className={
-            "flex flex-row justify-center text-white items-center font-reg"
-          }
+          style={{
+            top: "223px",
+            left: "50%",
+
+            position: "absolute",
+            transform: "translate(-50%, 0%)",
+          }}
         >
-          <button
-            className={
-              "border-white p-2 absolute transition duration-300 transform hover:scale-105" +
-              (timeFrame === "shortTerm" ? " bg-white text-black" : "")
-            }
-            style={{ top: "20px", left: "828px", borderWidth: "1px" }}
-            onClick={() => handleTimeFrame("shortTerm")}
-          >
-            1 Month
-          </button>
-          <button
-            className={
-              "border-white p-2 absolute transition duration-300 transform hover:scale-105" +
-              (timeFrame === "mediumTerm" ? " bg-white text-black" : "")
-            }
-            style={{ top: "20px", borderWidth: "1px" }}
-            onClick={() => handleTimeFrame("mediumTerm")}
-          >
-            6 Months
-          </button>
-          <button
-            className={
-              "border-white p-2 absolute transition duration-300 transform hover:scale-105" +
-              (timeFrame === "longTerm" ? " bg-white text-black" : "")
-            }
-            style={{ top: "20px", right: "828px", borderWidth: "1px" }}
-            onClick={() => handleTimeFrame("longTerm")}
-          >
-            All Time
-          </button>
+          <div className="flex flex-row justify-center items-center text-white">
+            <button
+              className={
+                "border-white p-2 transition duration-300 transform hover:scale-105 font-reg bg-customBlack" +
+                (timeFrame === "shortTerm" ? " bg-white text-black" : "")
+              }
+              style={{ borderWidth: "1px", width: "100px" }}
+              onClick={() => handleTimeFrame("shortTerm")}
+            >
+              1 Month
+            </button>
+            <button
+              className={
+                "border-white p-2 transition duration-300 transform hover:scale-105 font-reg bg-customBlack" +
+                (timeFrame === "mediumTerm" ? " bg-white text-black" : "")
+              }
+              style={{ borderWidth: "1px", width: "100px" }}
+              onClick={() => handleTimeFrame("mediumTerm")}
+            >
+              6 Months
+            </button>
+            <button
+              className={
+                "border-white p-2 transition duration-300 transform hover:scale-105 font-reg bg-customBlack" +
+                (timeFrame === "longTerm" ? " bg-white text-black" : "")
+              }
+              style={{ borderWidth: "1px", width: "100px" }}
+              onClick={() => handleTimeFrame("longTerm")}
+            >
+              All Time
+            </button>
+          </div>
         </div>
 
         {currentDataTermArtists &&
@@ -183,8 +190,8 @@ function Stats() {
           currentDataTermArtists.items.length > 0 && (
             <div>
               <div
-                className="absolute text-white text-8xl"
-                style={{ top: "184px", left: "950px" }}
+                className="absolute text-white text-8xl flex"
+                style={{ top: "74px", left: "574px" }}
               >
                 Your Top Artists
               </div>
@@ -308,21 +315,17 @@ function Stats() {
               <table
                 className="text-white absolute bg-black text-center "
                 style={{
-                  top: "338px",
+                  top: "324px",
                   right: "350px",
-                  left: "1086px",
-                  width: "452px",
+                  left: "657px",
+                  width: "570.3px",
                 }}
               >
                 <thead
                   className="border-customGray"
                   style={{ borderBottomWidth: "1px" }}
                 >
-                  <tr>
-                    <th className="pl-5">Rank</th>
-                    <th className="">Artist</th>
-                    <th className="pr-5">View</th>
-                  </tr>
+                  <tr></tr>
                 </thead>
                 <tbody>
                   {currentDataTermArtists.items.map((row, index) => (
@@ -337,7 +340,7 @@ function Stats() {
                           className="mr-6 ml-8"
                           style={{
                             width: "74.5px",
-                            height: "74.5px",
+                            height: "64.3px",
                             overflow: "hidden",
                             position: "relative",
                           }}

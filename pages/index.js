@@ -12,7 +12,6 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_REACT_APP_CLIENT_ID;
 const CLIENT_SECRET = process.env.NEXT_PUBLIC_REACT_APP_CLIENT_SECRET;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_REACT_APP_REDIRECT_URI;
 
-
 async function getAccessToken(code) {
   const verifier = localStorage.getItem("verifier");
 
@@ -78,40 +77,38 @@ export default function Home() {
   const [loggedIn, setloggedIn] = useState(true);
   const [stats, showStats] = useState(false);
 
+  // Redirect logic when the button is clicked
+
+  // Function to handle the login process
+
+  useEffect(() => {
+    async function checkAuthentication() {
+      const accessToken = window.localStorage.getItem("accessToken");
+      if (accessToken) {
+        setloggedIn(true);
+        showStats(true);
+      }
+    }
+
+    checkAuthentication();
+  }, []); // Empty dependency array ensures this runs only once after the component mounts
+
+  async function handleLogin() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if (!code) {
+      redirectToAuthCodeFlow();
+    } else {
+      const accessToken = await getAccessToken(code);
+      window.localStorage.setItem("accessToken", accessToken);
+      window.localStorage.setItem("isAuthenticated", true);
+      setloggedIn(true);
+      showStats(true);
+    }
+  }
+
   // grid line logic
-  // useEffect(() => {
-  //   const containerHeight = document.body.clientHeight;
-  //   //console.log("containerHeight", containerHeight);
-  //   const containerWidth = document.body.clientWidth;
-
-  //   const horizontalLinesCount = Math.floor(containerHeight / 90) ; // Adjust line spacing as needed
-  //   const verticalLinesCount = Math.floor(containerWidth / 90); // Adjust line spacing as needed
-
-  //   const horizontalLines = [];
-  //   for (let i = 1; i < horizontalLinesCount; i++) {
-  //     horizontalLines.push(
-  //       <div
-  //         key={`horizontal-${i}`}
-  //         className="absolute w-full h-px bg-customGray"
-  //         style={{ top: `${(i * containerHeight) / horizontalLinesCount}px` }}
-  //       />
-  //     );
-  //   }
-
-  //   const verticalLines = [];
-  //   for (let i = 1; i < verticalLinesCount; i++) {
-  //     verticalLines.push(
-  //       <div
-  //         key={`vertical-${i}`}
-
-  //         className="absolute w-px bg-customGray"
-  //         style={{ left: `${(i * containerWidth) / verticalLinesCount}px`, height: "2200px" }}
-  //       />
-  //     );
-  //   }
-
-  //   setLines([...horizontalLines, ...verticalLines]);
-  // }, []);
 
   const cellSize = 80; // Adjust this value to set the size of each grid cell
 
@@ -160,30 +157,13 @@ export default function Home() {
     };
   }, [cellSize]); // Include cellSize in the dependency array to recompute on cellSize change
 
-  // Redirect logic when the button is clicked
-
-  async function handleLogin() {
-    console.log("redirect_uri", process.env.REACT_APP_REDIRECT_URI);
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    if (!code) {
-      redirectToAuthCodeFlow();
-    } else {
-      const accessToken = await getAccessToken(code);
-      window.localStorage.setItem("accessToken", accessToken);
-      //await fetchProfile(token, "medium_term");
-      setloggedIn(false);
-      showStats(true);
-    }
-  }
-
   return (
     <div
       className="relative flex flex-col items-center justify-center bg-customBlack font-reg font-bold"
       style={{ height: "200vh" }}
     >
       <div className="absolute inset-0 grid ">{lines}</div>
-      {loggedIn && (
+      {!loggedIn && (
         <div>
           <div className="absolute" style={{ left: "120px", top: "0px" }}>
             <h1 className="text-9xl text-green-400 font-extrabold">Topify</h1>
