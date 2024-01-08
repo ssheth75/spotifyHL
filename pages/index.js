@@ -62,7 +62,7 @@ export default function Home() {
           </button>{" "}
         </div>
       ) : (
-        <Stats />
+        <Stats setLoggedIn={setLoggedIn}/>
       )}
     </div>
   );

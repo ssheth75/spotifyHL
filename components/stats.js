@@ -8,7 +8,7 @@ import { ArtistTimeFrame, TrackTimeFrame } from "./timeFrame";
 import { ArtistTable } from "./artistTable";
 import { TrackTable } from "./trackTable";
 
-function Stats() {
+function Stats(props) {
   const [timeFrame, setTimeFrame] = useState("mediumTerm");
   //// API data states ////
 
@@ -166,7 +166,7 @@ function Stats() {
     setTimeFrame(timeFrame);
   }
 
-// Handle view more/less buttons
+  // Handle view more/less buttons
   function handleNumViewArtists() {
     if (numArtists === 10) {
       setNumArtists(20);
@@ -185,6 +185,12 @@ function Stats() {
       setNumTracks(10);
       setTrackButtonText("View More");
     }
+  }
+
+  function handleLogout() {
+    localStorage.clear();
+    props.setLoggedIn(false);
+
   }
 
   return (
@@ -206,7 +212,17 @@ function Stats() {
         currentDataTermTracks &&
         currentDataTermTracks.items &&
         currentDataTermTracks.items.length > 0 && (
-          <div className="flex flex-col items-center justify center">
+          <div className="flex flex-col items-center justify center ">
+            <div style={{ position: "absolute", right: "15px", top: "15px" }}>
+              <button
+                className="w-20 h-10 transition duration-300 transform hover:scale-105"
+                style={{ borderColor: "white", borderWidth: "1px" }}
+                onClick={handleLogout}
+              >
+                {" "}
+                Logout{" "}
+              </button>
+            </div>
 
             {/* Artists */}
             <div className=" text-white text-8xl flex mt-20 mb-20">
