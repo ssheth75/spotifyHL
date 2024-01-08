@@ -2,8 +2,11 @@ import React from "react";
 import { useRef } from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+
+import { headers } from "@/next.config";
+import { ArtistTimeFrame, TrackTimeFrame } from "./timeFrame";
+import { ArtistTable } from "./artistTable";
+import { TrackTable } from "./trackTable";
 
 function Stats() {
   const [timeFrame, setTimeFrame] = useState("mediumTerm");
@@ -28,360 +31,227 @@ function Stats() {
   const [currentDataTermTracks, setCurrentDataTermTracks] = useState();
   const [currentDataTermArtists, setCurrentDataTermArtists] = useState();
 
-  /////// API Fetches ///////
-  let accessToken = window.localStorage.getItem("accessToken");
+  const [numArtists, setNumArtists] = useState(10);
+  const [artistButtonText, setArtistButtonText] = useState("View More");
+  const [numTracks, setNumTracks] = useState(10);
+  const [trackButtonText, setTrackButtonText] = useState("View More");
+
+  const [token, setToken] = useState("");
+  const [data, setData] = useState([]);
+  const [showGetData, setShowGetData] = useState(true);
 
   useEffect(() => {
-    // Fetch users top artists for short term
-    fetch("https://api.spotify.com/v1/me/top/artists?time_range=short_term", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserTopArtistsShort(data);
-        console.log("userTopArtistsShort", data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-
-    // Fetch users top artists for medium term
-    fetch("https://api.spotify.com/v1/me/top/artists?time_range=medium_term", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserTopArtistsMedium(data);
-        // Defualt when user loads page
-        setCurrentDataTermArtists(data);
-        console.log("userTopArtistsMedium", data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-
-    // Fetch users top artists for long term
-    fetch("https://api.spotify.com/v1/me/top/artists?time_range=long_term", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserTopArtistsLong(data);
-        console.log("userTopArtistsLong", data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-
-    // Fetch users top tracks for short term
-    fetch("https://api.spotify.com/v1/me/top/tracks?time_range=short_term", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserTopTracksShort(data);
-        console.log("userTopTracksShort", data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-
-    // Fetch users top tracks for medium term
-    fetch("https://api.spotify.com/v1/me/top/tracks?time_range=medium_term", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserTopTracksMedium(data);
-        // Defualt when user loads page
-        setCurrentDataTermTracks(data);
-        console.log("userTopTracksMedium", data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-
-    // Fetch users top tracks for long term
-    fetch("https://api.spotify.com/v1/me/top/tracks?time_range=long_term", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserTopTracksLong(data);
-        console.log("userTopTracksLong", data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    if (localStorage.getItem("accessToken")) {
+      setToken(localStorage.getItem("accessToken"));
+    }
   }, []);
 
+  const shortArtistEP =
+    "https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=20";
+  const mediumArtistEP =
+    "https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=20";
+  const longArtistEP =
+    "https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=20";
+
+  const shortTrackEP =
+    "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=20";
+  const mediumTrackEP =
+    "https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=20";
+  const longTrackEP =
+    "https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=20";
+
+  const handleGetData = () => {
+    setShowGetData(false);
+    console.log("token", token);
+
+    //// Short Term Artists ////
+    axios
+      .get(shortArtistEP, { headers: { Authorization: "Bearer " + token } })
+      .then((response) => {
+        setUserTopArtistsShort(response.data);
+
+        console.log("Short term artists", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    //// Medium Term Artists ////
+    axios
+      .get(mediumArtistEP, { headers: { Authorization: "Bearer " + token } })
+      .then((response) => {
+        setUserTopArtistsMedium(response.data);
+        setCurrentDataTermArtists(response.data);
+
+        console.log("Medium term artists", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    //// Long Term Artists ////
+    axios
+      .get(longArtistEP, { headers: { Authorization: "Bearer " + token } })
+      .then((response) => {
+        setUserTopArtistsLong(response.data);
+
+        console.log("Long term artists", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    //// Short Term Tracks ////
+    axios
+      .get(shortTrackEP, { headers: { Authorization: "Bearer " + token } })
+      .then((response) => {
+        setUserTopTracksShort(response.data);
+
+        console.log("Short term tracks", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    //// Medium Term Tracks ////
+    axios
+      .get(mediumTrackEP, { headers: { Authorization: "Bearer " + token } })
+      .then((response) => {
+        setUserTopTracksMedium(response.data);
+        setCurrentDataTermTracks(response.data);
+
+        console.log("Medium term tracks", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    //// Long Term Tracks ////
+    axios
+      .get(longTrackEP, { headers: { Authorization: "Bearer " + token } })
+      .then((response) => {
+        setUserTopTracksLong(response.data);
+
+        console.log("Long term tracks", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   // Function to handle time frame changes
-  function handleTimeFrame(timeFrame) {
+  function handleArtistTimeFrame(timeFrame) {
     if (timeFrame === "shortTerm") {
-      setCurrentDataTermTracks(userTopTracksShort);
       setCurrentDataTermArtists(userTopArtistsShort);
     }
     if (timeFrame === "mediumTerm") {
-      setCurrentDataTermTracks(userTopTracksMedium);
       setCurrentDataTermArtists(userTopArtistsMedium);
     }
     if (timeFrame === "longTerm") {
-      setCurrentDataTermTracks(userTopTracksLong);
       setCurrentDataTermArtists(userTopArtistsLong);
     }
     setTimeFrame(timeFrame);
   }
 
+  function handleTrackTimeFrame(timeFrame) {
+    if (timeFrame === "shortTerm") {
+      setCurrentDataTermTracks(userTopTracksShort);
+    }
+    if (timeFrame === "mediumTerm") {
+      setCurrentDataTermTracks(userTopTracksMedium);
+    }
+    if (timeFrame === "longTerm") {
+      setCurrentDataTermTracks(userTopTracksLong);
+    }
+    setTimeFrame(timeFrame);
+  }
+
+// Handle view more/less buttons
+  function handleNumViewArtists() {
+    if (numArtists === 10) {
+      setNumArtists(20);
+      setArtistButtonText("View Less");
+    } else if (numArtists === 20) {
+      setNumArtists(10);
+      setArtistButtonText("View More");
+    }
+  }
+
+  function handleNumViewTracks() {
+    if (numTracks === 10) {
+      setNumTracks(20);
+      setTrackButtonText("View Less");
+    } else if (numTracks === 20) {
+      setNumTracks(10);
+      setTrackButtonText("View More");
+    }
+  }
+
   return (
     // you  removed flex here
-    <div className="h-screen bg-customBlack font-custom">
-      <div>
-        <div
-          style={{
-            top: "223px",
-            left: "50%",
+    <div className=" flex flex-col bg-customBlack font-custom">
+      {showGetData && (
+        <div className="h-screen w-screen bg-customBlack flex items-center justify-center">
+          <button
+            onClick={handleGetData}
+            className="text-6xl transition duration-300 transform hover:scale-125"
+          >
+            Get Your <span className="text-green-400 ">Topify</span>
+          </button>
+        </div>
+      )}
+      {currentDataTermArtists &&
+        currentDataTermArtists.items &&
+        currentDataTermArtists.items.length > 0 &&
+        currentDataTermTracks &&
+        currentDataTermTracks.items &&
+        currentDataTermTracks.items.length > 0 && (
+          <div className="flex flex-col items-center justify center">
 
-            position: "absolute",
-            transform: "translate(-50%, 0%)",
-          }}
-        >
-          <div className="flex flex-row justify-center items-center text-white">
+            {/* Artists */}
+            <div className=" text-white text-8xl flex mt-20 mb-20">
+              Your Top Artists
+            </div>
+
+            <ArtistTimeFrame
+              handleArtistTimeFrame={handleArtistTimeFrame}
+              timeFrame={timeFrame}
+            />
+            <ArtistTable
+              currentDataTermArtists={currentDataTermArtists}
+              numArtists={numArtists}
+            />
+
             <button
-              className={
-                "border-white p-2 transition duration-300 transform hover:scale-105 font-reg bg-customBlack" +
-                (timeFrame === "shortTerm" ? " bg-white text-black" : "")
-              }
-              style={{ borderWidth: "1px", width: "100px" }}
-              onClick={() => handleTimeFrame("shortTerm")}
+              className="w-32 font-reg h-10 border-white mt-10 transition duration-300 transform hover:scale-105"
+              style={{ borderWidth: "1px" }}
+              onClick={handleNumViewArtists}
             >
-              1 Month
+              {artistButtonText}
             </button>
+
+            {/* Tracks */}
+            <div className=" text-white text-8xl flex mt-32 mb-20">
+              Your Top Tracks
+            </div>
+
+            <TrackTimeFrame
+              handleTrackTimeFrame={handleTrackTimeFrame}
+              timeFrame={timeFrame}
+            />
+            <TrackTable
+              currentDataTermTracks={currentDataTermTracks}
+              numTracks={numTracks}
+            />
             <button
-              className={
-                "border-white p-2 transition duration-300 transform hover:scale-105 font-reg bg-customBlack" +
-                (timeFrame === "mediumTerm" ? " bg-white text-black" : "")
-              }
-              style={{ borderWidth: "1px", width: "100px" }}
-              onClick={() => handleTimeFrame("mediumTerm")}
+              className="w-32 font-reg h-10 border-white mt-10 mb-20 transition duration-300 transform hover:scale-105"
+              style={{ borderWidth: "1px" }}
+              onClick={handleNumViewTracks}
             >
-              6 Months
-            </button>
-            <button
-              className={
-                "border-white p-2 transition duration-300 transform hover:scale-105 font-reg bg-customBlack" +
-                (timeFrame === "longTerm" ? " bg-white text-black" : "")
-              }
-              style={{ borderWidth: "1px", width: "100px" }}
-              onClick={() => handleTimeFrame("longTerm")}
-            >
-              All Time
+              {trackButtonText}
             </button>
           </div>
-        </div>
-
-        {currentDataTermArtists &&
-          currentDataTermArtists.items &&
-          currentDataTermArtists.items.length > 0 && (
-            <div>
-              <div
-                className="absolute text-white text-8xl flex"
-                style={{ top: "74px", left: "574px" }}
-              >
-                Your Top Artists
-              </div>
-              <div
-                className="text-white absolute "
-                style={{ top: "325px", left: "86px" }}
-              >
-                <div className="font-reg text-xl">
-                  {" "}
-                  1 ) {currentDataTermArtists.items[0].name}
-                </div>
-              </div>
-
-              <div
-                className="absolute "
-                style={{
-                  top: "82px",
-                  left: "82px",
-                  width: "245px",
-                  height: "241px",
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  <img
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                    src={currentDataTermArtists.items[0].images[0].url}
-                    alt="Top Artist"
-                  />
-                </div>
-              </div>
-
-              <div
-                className="text-white absolute "
-                style={{ top: "650px", left: "86px" }}
-              >
-                <div className="font-reg text-xl">
-                  {" "}
-                  2 ) {currentDataTermArtists.items[1].name}
-                </div>
-              </div>
-
-              <div
-                className="absolute "
-                style={{
-                  top: "406px",
-                  left: "82px",
-                  width: "245px",
-                  height: "241px",
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  <img
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                    src={currentDataTermArtists.items[1].images[0].url}
-                    alt="Top Artist"
-                  />
-                </div>
-              </div>
-
-              <div
-                className="text-white absolute "
-                style={{ top: "975px", left: "86px" }}
-              >
-                <div className="font-reg text-xl">
-                  {" "}
-                  2 ) {currentDataTermArtists.items[2].name}
-                </div>
-              </div>
-
-              <div
-                className="absolute "
-                style={{
-                  top: "730px",
-                  left: "82px",
-                  width: "245px",
-                  height: "241px",
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  <img
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                    src={currentDataTermArtists.items[2].images[0].url}
-                    alt="Top Artist"
-                  />
-                </div>
-              </div>
-
-              <table
-                className="text-white absolute bg-black text-center "
-                style={{
-                  top: "324px",
-                  right: "350px",
-                  left: "657px",
-                  width: "570.3px",
-                }}
-              >
-                <thead
-                  className="border-customGray"
-                  style={{ borderBottomWidth: "1px" }}
-                >
-                  <tr></tr>
-                </thead>
-                <tbody>
-                  {currentDataTermArtists.items.map((row, index) => (
-                    <tr
-                      className="border-customGray pt-2"
-                      style={{ borderBottomWidth: "1px" }}
-                      key={row.id}
-                    >
-                      <td className="pl-5 font-light">{index + 1}</td>
-                      <td className="flex flex-row p-2 ml-3 items-center ">
-                        <div
-                          className="mr-6 ml-8"
-                          style={{
-                            width: "74.5px",
-                            height: "64.3px",
-                            overflow: "hidden",
-                            position: "relative",
-                          }}
-                        >
-                          <img
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                            src={row.images[0].url}
-                          ></img>
-                        </div>
-
-                        {row.name}
-                      </td>
-
-                      <td className="pr-8 pl-5">
-                        <a
-                          href={row.external_urls.spotify}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-10 h-10"
-                        >
-                          <button className="">
-                            {" "}
-                            {/* display spotify font awesome icon here */}
-                            <FontAwesomeIcon
-                              icon={faSpotify}
-                              className="text-white w-6 h-6"
-                            />
-                          </button>
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-      </div>
+        )}
     </div>
   );
 }
