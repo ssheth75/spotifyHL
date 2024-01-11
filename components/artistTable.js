@@ -27,7 +27,7 @@ export function ArtistTable(props) {
                   className="mr-6 ml-8"
                   style={{
                     width: "74.5px",
-                    height: "64.3px",
+                    height: "74.5px",
                     overflow: "hidden",
                     position: "relative",
                   }}

@@ -190,7 +190,6 @@ function Stats(props) {
   function handleLogout() {
     localStorage.clear();
     props.setLoggedIn(false);
-
   }
 
   return (
@@ -233,6 +232,29 @@ function Stats(props) {
               handleArtistTimeFrame={handleArtistTimeFrame}
               timeFrame={timeFrame}
             />
+
+            <div
+              className="flex flex-row items-center justify-center gap-20 mb-10"
+              style={{ overflow: "hidden", position: "relative" }}
+            >
+              <img
+                src={currentDataTermArtists.items[0].images[0].url}
+                className="w-52 h-52"
+                style={{ objectFit: "cover" }}
+              />
+              <img
+                src={currentDataTermArtists.items[1].images[0].url}
+                className="w-52 h-52"
+                style={{ objectFit: "cover" }}
+              />
+
+              <img
+                src={currentDataTermArtists.items[2].images[0].url}
+                className="w-52 h-52"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
+
             <ArtistTable
               currentDataTermArtists={currentDataTermArtists}
               numArtists={numArtists}
@@ -255,6 +277,28 @@ function Stats(props) {
               handleTrackTimeFrame={handleTrackTimeFrame}
               timeFrame={timeFrame}
             />
+
+            <div
+              className="flex flex-row items-center justify-center gap-20 mb-10"
+              style={{ overflow: "hidden", position: "relative" }}
+            >
+              <img
+                src={currentDataTermTracks.items[0].album.images[0].url}
+                className="w-52 h-52"
+                style={{ objectFit: "cover" }}
+              />
+              <img
+                src={currentDataTermTracks.items[1].album.images[0].url}
+                className="w-52 h-52"
+                style={{ objectFit: "cover" }}
+              />
+
+              <img
+                src={currentDataTermTracks.items[2].album.images[0].url}
+                className="w-52 h-52"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
             <TrackTable
               currentDataTermTracks={currentDataTermTracks}
               numTracks={numTracks}

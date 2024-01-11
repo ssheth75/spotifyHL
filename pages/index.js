@@ -53,13 +53,14 @@ export default function Home() {
   return (
     <div className="relative flex flex-col items-center justify-center bg-customBlack font-reg text-white font-bold">
       {!loggedIn ? (
-        <div className="h-screen w-screen bg-customBlack flex items-center justify-center">
+        <div className="h-screen w-screen bg-customBlack flex items-center flex-col justify-center">
           <button
             onClick={handleLogin}
             className="text-6xl transition duration-300 transform hover:scale-125"
           >
             Login with <span className="text-green-400">Spotify</span>{" "}
           </button>{" "}
+          <div className="text-white mt-6 font-light"> Your Most Listened to Artists and Tracks</div>
         </div>
       ) : (
         <Stats setLoggedIn={setLoggedIn}/>
